@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+use_inline_resources
+
 include Chef::DSL::IncludeRecipe
 
 action :before_compile do
@@ -58,7 +60,7 @@ end
 def create_context_file
   host = new_resource.find_database_server(new_resource.database_master_role)
 
-  template "#{new_resource.path}/shared/#{new_resource.application.name}.xml" do
+  t = template "#{new_resource.path}/shared/#{new_resource.application.name}.xml" do
     source new_resource.context_template || "context.xml.erb"
     cookbook new_resource.context_template ? new_resource.cookbook_name.to_s : "application_java"
     owner new_resource.owner
@@ -72,4 +74,6 @@ def create_context_file
       :war => "#{new_resource.path}/current/#{new_resource.war || ::File.basename(new_resource.application.repository)}"
     )
   end
+
+  new_resource.updated_by_last_action(t.updated_by_last_action?)
 end
