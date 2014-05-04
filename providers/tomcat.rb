@@ -25,7 +25,7 @@ action :before_compile do
 
   unless new_resource.restart_command
     new_resource.restart_command do
-      run_context.resource_collection.find(:service => "tomcat").run_action(:restart)
+      run_context.resource_collection.find(:service => node['tomcat']['service']).run_action(:restart)
     end
   end
 
@@ -45,7 +45,7 @@ action :before_deploy do
 
   link "#{node['tomcat']['context_dir']}/#{new_resource.application.name}.xml" do
     to "#{new_resource.application.path}/shared/#{new_resource.application.name}.xml"
-    notifies :restart, resources(:service => "tomcat")
+    notifies :restart, resources(:service => node['tomcat']['service'])
   end
 end
 
